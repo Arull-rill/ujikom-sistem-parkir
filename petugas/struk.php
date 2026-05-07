@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../config.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'petugas') {
@@ -31,105 +32,186 @@ $data = mysqli_fetch_assoc($result);
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Struk Pembayaran Parkir</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Courier New', monospace; background: #f5f5f5; padding: 20px; }
-        .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border: 2px dashed #333; }
-        .struk { text-align: center; }
-        .struk h2 { margin-bottom: 5px; }
-        .struk h3 { margin-bottom: 20px; font-weight: normal; }
-        .separator { border-top: 1px dashed #333; margin: 15px 0; }
-        .row { display: flex; justify-content: space-between; margin: 8px 0; }
-        .label { font-weight: bold; }
-        .total { border-top: 2px solid #333; border-bottom: 2px solid #333; padding: 10px 0; margin: 15px 0; }
-        .total .amount { font-size: 24px; font-weight: bold; }
-        .footer { text-align: center; margin-top: 20px; font-size: 12px; }
-        .buttons { text-align: center; margin-top: 20px; }
-        .btn { padding: 10px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 3px; font-size: 14px; }
-        .btn-print { background: #28a745; color: white; }
-        .btn-back { background: #6c757d; color: white; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: monospace;
+            background: #e5e5e5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 230px;
+            background: #fff;
+            padding: 8px;
+        }
+
+        .struk {
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            /* BIKIN LEBIH TEBAL */
+        }
+
+        .title {
+            font-size: 14px;
+            font-weight: 900;
+            /* super tebal */
+        }
+
+        .separator {
+            border-top: 1px dashed #000;
+            margin: 5px 0;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin: 2px 0;
+        }
+
+        .total {
+            border-top: 1px solid #000;
+            margin-top: 5px;
+            padding-top: 5px;
+            font-size: 13px;
+        }
+
+        .amount {
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .footer {
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .buttons {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 6px 10px;
+            font-size: 12px;
+            margin: 3px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-print {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
         @media print {
-            .buttons { display: none; }
-            body { padding: 0; background: white; }
-            .container { border: none; }
+            @page {
+                size: 80mm auto;
+                margin: 0;
+            }
+
+            body {
+                background: white;
+                display: block;
+            }
+
+            .container {
+                width: 100%;
+                padding: 5px;
+            }
+
+            .buttons {
+                display: none;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="struk">
-            <h2>SISTEM PARKIR SISWA</h2>
-            <h3>STRUK PEMBAYARAN</h3>
-            
+            <div class="title">PARKIR SISWA</div>
+
             <div class="separator"></div>
-            
+
             <div class="row">
-                <span class="label">No. Transaksi</span>
-                <span><?php echo str_pad($data['id'], 6, '0', STR_PAD_LEFT); ?></span>
+                <span>No</span>
+                <span><?php echo str_pad($data['id'], 4, '0', STR_PAD_LEFT); ?></span>
             </div>
-            
+
             <div class="row">
-                <span class="label">Tanggal</span>
-                <span><?php echo date('d/m/Y', strtotime($data['waktu_keluar'])); ?></span>
-            </div>
-            
-            <div class="separator"></div>
-            
-            <div class="row">
-                <span class="label">Plat Nomor</span>
+                <span>Plat</span>
                 <span><?php echo $data['plat_nomor']; ?></span>
             </div>
-            
+
             <div class="row">
-                <span class="label">Jenis Kendaraan</span>
+                <span>Jenis</span>
                 <span><?php echo strtoupper($data['jenis_kendaraan']); ?></span>
             </div>
-            
+
             <div class="separator"></div>
-            
+
             <div class="row">
-                <span class="label">Waktu Masuk</span>
-                <span><?php echo date('d/m/Y H:i', strtotime($data['waktu_masuk'])); ?></span>
+                <span>Masuk</span>
+                <span><?php echo date('d/m H:i', strtotime($data['waktu_masuk'])); ?></span>
             </div>
-            
+
             <div class="row">
-                <span class="label">Waktu Keluar</span>
-                <span><?php echo date('d/m/Y H:i', strtotime($data['waktu_keluar'])); ?></span>
+                <span>Keluar</span>
+                <span><?php echo date('d/m H:i', strtotime($data['waktu_keluar'])); ?></span>
             </div>
-            
+
             <div class="row">
-                <span class="label">Durasi Parkir</span>
+                <span>Durasi</span>
                 <span><?php echo $data['durasi']; ?> Jam</span>
             </div>
-            
+
+            <div class="separator"></div>
+
             <div class="total">
                 <div class="row">
-                    <span class="label">TOTAL BAYAR</span>
-                    <span class="amount">Rp <?php echo number_format($data['biaya'], 0, ',', '.'); ?></span>
+                    <span>TOTAL</span>
+                    <span class="amount">Rp<?php echo number_format($data['biaya'], 0, ',', '.'); ?></span>
                 </div>
             </div>
-            
+
+            <div class="separator"></div>
+
             <div class="footer">
-                <p>Petugas: <?php echo $data['petugas_keluar']; ?></p>
-                <p style="margin-top: 10px;">Terima kasih atas kunjungan Anda</p>
-                <p>Hati-hati di jalan!</p>
+                <div><?php echo $data['petugas_keluar']; ?></div>
+                <div>Terima kasih</div>
             </div>
         </div>
-    </div>
-    
-    <div class="buttons">
-        <button onclick="window.print()" class="btn btn-print">CETAK STRUK</button>
-        <button onclick="window.location.href='keluar.php'" class="btn btn-back">KEMBALI</button>
-    </div>
-    
-    <script>
-        // Auto print saat halaman dibuka
-        window.onload = function() {
-            // Uncomment baris berikut jika ingin auto print
-            // window.print();
-        }
-    </script>
+
+        <div class="buttons">
+            <button onclick="window.print()" class="btn btn-print">CETAK STRUK</button>
+            <button onclick="window.location.href='keluar.php'" class="btn btn-back">KEMBALI</button>
+        </div>
+
+        <script>
+            // Auto print saat halaman dibuka
+            window.onload = function() {
+                // Uncomment baris berikut jika ingin auto print
+                // window.print();
+            }
+        </script>
 </body>
+
 </html>

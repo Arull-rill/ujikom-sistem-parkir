@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../config.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
@@ -6,7 +7,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
     exit();
 }
 
-// Ambil data kendaraan
 $query = "SELECT k.*, 
           u1.nama as nama_petugas_masuk,
           u2.nama as nama_petugas_keluar
@@ -16,68 +16,68 @@ $query = "SELECT k.*,
           ORDER BY k.id DESC";
 $result = mysqli_query($conn, $query);
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Kendaraan - Admin</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f5f5; }
-        .header { background: #007bff; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        .header a { color: white; text-decoration: none; background: #0056b3; padding: 8px 15px; border-radius: 3px; }
-        .container { padding: 30px; }
-        .card { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
-        th { background: #f8f9fa; }
-        .badge { padding: 3px 8px; border-radius: 3px; font-size: 12px; }
-        .badge-parkir { background: #28a745; color: white; }
-        .badge-keluar { background: #6c757d; color: white; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/kendaraan.css">
 </head>
 <body>
-    <div class="header">
+
+<header class="header">
+    <div class="header-brand">
+        <div class="header-icon">
+            <svg viewBox="0 0 24 24"><path d="M5 11l1.5-4.5h11L19 11M17.5 16a1.5 1.5 0 01-3 0 1.5 1.5 0 013 0zm-9 0a1.5 1.5 0 01-3 0 1.5 1.5 0 013 0zM3 11h18v5H3z"/></svg>
+        </div>
         <h1>Data Kendaraan</h1>
-        <a href="index.php">← Kembali</a>
     </div>
-    
-    <div class="container">
-        <div class="card">
-            <h3>Semua Data Kendaraan</h3>
-            <table>
+    <div class="header-right">
+        <a href="export_kendaraan.php" class="btn-export">Export PDF</a>
+        <a href="index.php" class="btn-back">← Dashboard</a>
+    </div>
+</header>
+
+<div class="container">
+    <p class="section-label">Semua Data Kendaraan</p>
+    <div class="card">
+        <div class="overflow-wrap">
+        <table>
+            <thead>
                 <tr>
                     <th>ID</th>
                     <th>Plat Nomor</th>
                     <th>Jenis</th>
                     <th>Waktu Masuk</th>
                     <th>Waktu Keluar</th>
-                    <th>Durasi (jam)</th>
+                    <th>Durasi</th>
                     <th>Biaya</th>
                     <th>Status</th>
                     <th>Petugas Masuk</th>
                     <th>Petugas Keluar</th>
                 </tr>
+            </thead>
+            <tbody>
                 <?php while ($row = mysqli_fetch_assoc($result)): ?>
                 <tr>
-                    <td><?php echo $row['id']; ?></td>
-                    <td><?php echo $row['plat_nomor']; ?></td>
-                    <td><?php echo strtoupper($row['jenis_kendaraan']); ?></td>
-                    <td><?php echo date('d/m/Y H:i', strtotime($row['waktu_masuk'])); ?></td>
-                    <td><?php echo $row['waktu_keluar'] ? date('d/m/Y H:i', strtotime($row['waktu_keluar'])) : '-'; ?></td>
-                    <td><?php echo $row['durasi'] ? $row['durasi'] : '-'; ?></td>
-                    <td><?php echo $row['biaya'] ? 'Rp ' . number_format($row['biaya'], 0, ',', '.') : '-'; ?></td>
-                    <td>
-                        <span class="badge badge-<?php echo $row['status']; ?>">
-                            <?php echo strtoupper($row['status']); ?>
-                        </span>
-                    </td>
-                    <td><?php echo $row['nama_petugas_masuk']; ?></td>
-                    <td><?php echo $row['nama_petugas_keluar'] ? $row['nama_petugas_keluar'] : '-'; ?></td>
+                    <td class="id-cell">#<?= $row['id'] ?></td>
+                    <td><span class="plat"><?= $row['plat_nomor'] ?></span></td>
+                    <td><span class="tag <?= $row['jenis_kendaraan']==='motor' ? 'tag-motor' : 'tag-mobil' ?>"><?= strtoupper($row['jenis_kendaraan']) ?></span></td>
+                    <td class="time-cell"><?= date('d/m/Y H:i', strtotime($row['waktu_masuk'])) ?></td>
+                    <td class="time-cell"><?= $row['waktu_keluar'] ? date('d/m/Y H:i', strtotime($row['waktu_keluar'])) : '<span class="dash">—</span>' ?></td>
+                    <td class="durasi-cell"><?= $row['durasi'] ? $row['durasi'].' jam' : '<span class="dash">—</span>' ?></td>
+                    <td class="biaya-cell"><?= $row['biaya'] ? 'Rp '.number_format($row['biaya'],0,',','.') : '<span class="dash" style="font-weight:400">—</span>' ?></td>
+                    <td><span class="tag tag-<?= $row['status'] ?>"><?= strtoupper($row['status']) ?></span></td>
+                    <td class="petugas-cell"><?= $row['nama_petugas_masuk'] ?? '<span class="dash">—</span>' ?></td>
+                    <td class="petugas-cell"><?= $row['nama_petugas_keluar'] ? $row['nama_petugas_keluar'] : '<span class="dash">—</span>' ?></td>
                 </tr>
                 <?php endwhile; ?>
-            </table>
+            </tbody>
+        </table>
         </div>
     </div>
+</div>
 </body>
 </html>

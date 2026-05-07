@@ -12,6 +12,4 @@ if (!$conn) {
     die("Koneksi gagal: " . mysqli_connect_error());
 }
 
-// Session Start
-session_start();
 ?>

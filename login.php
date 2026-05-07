@@ -28,7 +28,6 @@ if (isset($_POST['login'])) {
         } else {
             header("Location: owner/dashboard.php");
         }
-
     } else {
         echo "<script>alert('Username atau password salah!');</script>";
     }
@@ -37,20 +36,23 @@ if (isset($_POST['login'])) {
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Login</title>
 </head>
+
 <body>
 
-<h2>Login</h2>
+    <h2>Login</h2>
 
-<form method="POST">
-    <input type="text" name="username" placeholder="Username" required><br><br>
-    <input type="password" name="password" placeholder="Password" required><br><br>
-    <button type="submit" name="login">Login</button>
-</form>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Username" required><br><br>
+        <input type="password" name="password" placeholder="Password" required><br><br>
+        <button type="submit" name="login">Login</button>
+    </form>
 
-<a href="register.php">Belum punya akun? Register</a>
+    <a href="register.php">Belum punya akun? Register</a>
 
 </body>
+
 </html>
